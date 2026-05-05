@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profit Math — Free Ad Calculator for Small Business</title>
+<meta name="description" content="Know exactly how much you can spend to get a customer before your next ad campaign. Free CAC, break-even, and budget calculators.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0E0E0E;
+    --off-white: #F5F3EE;
+    --warm-white: #FAFAF7;
+    --green: #1A9E72;
+    --green-light: #E6F7F1;
+    --green-dark: #0D6E4F;
+    --amber: #D4860A;
+    --amber-light: #FDF3E3;
+    --red: #C0392B;
+    --red-light: #FDECEA;
+    --border: #E4E2DC;
+    --text-secondary: #6B6860;
+    --text-muted: #A09D96;
+    --shadow: 0 2px 12px rgba(14,14,14,0.08);
+    --shadow-lg: 0 8px 32px rgba(14,14,14,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--off-white);
+    color: var(--black);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--black);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: white;
+    letter-spacing: -0.3px;
+  }
+  .nav-logo span { color: var(--green); }
+  .nav-cta {
+    background: var(--green);
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .nav-cta:hover { background: var(--green-dark); }
+
+  /* HERO */
+  .hero {
+    background: var(--black);
+    color: white;
+    padding: 80px 32px 72px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(26,158,114,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(26,158,114,0.2);
+    color: #4ECDA0;
+    border: 1px solid rgba(26,158,114,0.3);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 5vw, 54px);
+    line-height: 1.12;
+    letter-spacing: -0.5px;
+    max-width: 720px;
+    margin: 0 auto 20px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--green);
+  }
+  .hero p {
+    color: rgba(255,255,255,0.6);
+    font-size: 17px;
+    max-width: 500px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+  .hero-tools {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+  .hero-tool-chip {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.75);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+  }
+  .hero-scroll {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.35);
+    font-size: 13px;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* TABS */
+  .app-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 32px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 9px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { background: var(--off-white); color: var(--black); }
+  .tab-btn.active {
+    background: var(--black);
+    color: white;
+    font-weight: 600;
+  }
+  .tab-number {
+    display: inline-block;
+    width: 18px; height: 18px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+    margin-right: 6px;
+  }
+  .tab-btn:not(.active) .tab-number {
+    background: rgba(14,14,14,0.08);
+  }
+
+  /* PANEL */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* CARD */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+    color: var(--black);
+  }
+  .card-desc {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 28px;
+    line-height: 1.55;
+  }
+
+  /* INPUTS */
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 580px) {
+    .field-grid { grid-template-columns: 1fr; }
+    .tabs { flex-wrap: nowrap; }
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .field-hint { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 2px; }
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .input-prefix, .input-suffix {
+    position: absolute;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    pointer-events: none;
+  }
+  .input-prefix { left: 12px; }
+  .input-suffix { right: 12px; }
+  input[type="number"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    color: var(--black);
+    background: var(--warm-white);
+    transition: border-color 0.15s;
+    -moz-appearance: textfield;
+    outline: none;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input[type="number"]:focus {
+    border-color: var(--green);
+    background: white;
+  }
+  .has-prefix input { padding-left: 28px; }
+  .has-suffix input { padding-right: 28px; }
+
+  /* RESULTS */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 8px;
+  }
+  @media (max-width: 580px) {
+    .results-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .result-box {
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    transition: all 0.2s;
+  }
+  .result-box.highlight {
+    background: var(--green-light);
+    border-color: var(--green);
+  }
+  .result-box.warn {
+    background: var(--amber-light);
+    border-color: var(--amber);
+  }
+  .result-box.danger {
+    background: var(--red-light);
+    border-color: var(--red);
+  }
+  .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .result-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--black);
+    letter-spacing: -0.5px;
+  }
+  .result-box.highlight .result-value { color: var(--green-dark); }
+  .result-box.warn .result-value { color: var(--amber); }
+  .result-box.danger .result-value { color: var(--red); }
+  .result-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  /* INSIGHT BOX */
+  .insight {
+    border-radius: var(--radius-sm);
+    padding: 16px 18px;
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    border-left: 3px solid;
+    display: none;
+  }
+  .insight.show { display: block; }
+  .insight.good { background: var(--green-light); border-color: var(--green); color: var(--green-dark); }
+  .insight.caution { background: var(--amber-light); border-color: var(--amber); color: #7A4E00; }
+  .insight.bad { background: var(--red-light); border-color: var(--red); color: #7A1E1E; }
+  .insight strong { font-weight: 600; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  /* GROWTH MATH */
+  .funnel-viz {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 20px 0;
+  }
+  .funnel-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--off-white);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: all 0.3s ease;
+  }
+  .funnel-step.show {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .funnel-icon { font-size: 18px; width: 28px; text-align: center; }
+  .funnel-text { flex: 1; font-size: 14px; color: var(--text-secondary); }
+  .funnel-text strong { color: var(--black); font-family: 'DM Mono', monospace; font-size: 16px; }
+  .funnel-arrow { color: var(--text-muted); font-size: 12px; }
+
+  /* BUDGET ALLOCATION */
+  .budget-bar {
+    height: 32px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    display: flex;
+    margin: 20px 0 12px;
+    background: var(--border);
+  }
+  .budget-seg {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.04em;
+    transition: width 0.5s ease;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .seg-test { background: #5B4BB5; }
+  .seg-scale { background: var(--green); }
+  .seg-retarget { background: var(--amber); }
+  .seg-reserve { background: #888; }
+  .budget-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-amount {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    color: var(--black);
+    margin-left: auto;
+    font-size: 13px;
+  }
+
+  /* DIAGNOSIS TREE */
+  .diagnosis-question {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .diag-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 480px) { .diag-options { grid-template-columns: 1fr; } }
+  .diag-option {
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    text-align: left;
+    color: var(--black);
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  .diag-option:hover {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+  .diag-result {
+    background: var(--green-light);
+    border: 1.5px solid var(--green);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    display: none;
+  }
+  .diag-result.show { display: block; }
+  .diag-result-title {
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+  .diag-result-fix {
+    font-size: 14px;
+    color: #1A4A38;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .diag-reset {
+    background: none;
+    border: 1px solid var(--green);
+    color: var(--green-dark);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.15s;
+  }
+  .diag-reset:hover { background: var(--green); color: white; }
+  .diag-breadcrumb {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .diag-breadcrumb span { color: var(--text-secondary); }
+
+  /* UPGRADE BANNER */
+  .upgrade-banner {
+    background: var(--black);
+    color: white;
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-top: 40px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  .upgrade-banner::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(26,158,114,0.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .upgrade-banner h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+  }
+  .upgrade-banner p {
+    color: rgba(255,255,255,0.6);
+    font-size: 15px;
+    max-width: 500px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+  .upgrade-features {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .upgrade-feat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+  }
+  .upgrade-feat::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+  }
+  .upgrade-btn {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .upgrade-btn:hover { background: var(--green-dark); }
+  .upgrade-price {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 10px;
+  }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--off-white);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .checklist li:hover { border-color: var(--green); }
+  .checklist li.checked {
+    background: var(--green-light);
+    border-color: var(--green);
+    color: var(--green-dark);
+  }
+  .check-box {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.15s;
+  }
+  .checklist li.checked .check-box {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+  .check-text { flex: 1; line-height: 1.5; }
+  .check-category {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 20px 0 10px;
+  }
+  .check-category:first-child { margin-top: 0; }
+  .progress-bar-wrap {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    height: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .progress-label strong { color: var(--black); }
+
+  /* TOOLTIP */
+  .tooltip-wrap { position: relative; display: inline-block; margin-left: 4px; cursor: help; }
+  .tooltip-icon {
+    width: 15px; height: 15px;
+    background: var(--text-muted);
+    color: white;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    line-height: 1;
+  }
+  .tooltip-text {
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--black);
+    color: white;
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 10;
+    max-width: 200px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .tooltip-wrap:hover .tooltip-text { opacity: 1; }
+
+  /* FOOTER NOTE */
+  .footer-note {
+    text-align: center;
+    padding: 40px 24px;
+    color: var(--text-muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .footer-note a { color: var(--green-dark); text-decoration: none; }
+  .footer-note a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Profit<span>Math</span></div>
+  <a href="https://rizwankgrowth.gumroad.com" target="_blank" class="nav-cta">Get Full System →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Free Calculator Suite</div>
+  <h1>Know your numbers<br><em>before</em> you spend a dollar</h1>
+  <p>Five free tools built from the same research that found these problems in 100+ failed campaigns. No email required.</p>
+  <div class="hero-tools">
+    <span class="hero-tool-chip">CAC Calculator</span>
+    <span class="hero-tool-chip">Growth Math</span>
+    <span class="hero-tool-chip">Budget Allocator</span>
+    <span class="hero-tool-chip">Failure Diagnosis</span>
+    <span class="hero-tool-chip">Pre-Launch Audit</span>
+  </div>
+  <div class="hero-scroll">
+    <span>Start calculating below</span>
+    <span>↓</span>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app-container">
+
+  <!-- TABS -->
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" onclick="switchTab(0)" role="tab"><span class="tab-number">1</span>CAC Calculator</button>
+    <button class="tab-btn" onclick="switchTab(1)" role="tab"><span class="tab-number">2</span>Growth Math</button>
+    <button class="tab-btn" onclick="switchTab(2)" role="tab"><span class="tab-number">3</span>Budget Allocator</button>
+    <button class="tab-btn" onclick="switchTab(3)" role="tab"><span class="tab-number">4</span>Failure Diagnosis</button>
+    <button class="tab-btn" onclick="switchTab(4)" role="tab"><span class="tab-number">5</span>Pre-Launch Audit</button>
+  </div>
+
+  <!-- ══ TAB 1: CAC CALCULATOR ══ -->
+  <div class="panel active" id="panel-0">
+    <div class="card">
+      <div class="card-title">Max CAC & Break-Even Calculator</div>
+      <div class="card-desc">Set your maximum acceptable cost to acquire a customer before touching Ads Manager. This single number ends the guessing game.</div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label>Average Order Value <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">What the average customer pays per transaction.</span></span></label>
+          <div class="input-wrap has-prefix"><span class="input-prefix">$</span><input type="number" id="aov" value="250" min="1" oninput="calcCAC()"></div>
+        </div>
+        <div class="field">
+          <label>Gross Margin <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Revenue minus cost of goods. If you sell a $100 product that costs $30 to deliver, your margin is 70%.</span></span></label>
+          <div class="input-wrap has-suffix"><input type="number" id="margin" value="60" min="1" max="100" oninput="calcCAC()"><span class="input-suffix">%</span></div>
+        </div>
+        <div class="field">
+          <label>Expected Conversion Rate <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">% of ad clicks that become paying customers. Industry average: 1–3%.</span></span></label>
+          <div class="input-wrap has-suffix"><input type="number" id="cvr" value="2" min="0.1" max="100" step="0.1" oninput="calcCAC()"><span class="input-suffix">%</span></div>
+        </div>
+        <div class="field">
+          <label>Customer Lifetime Value <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Total revenue from a customer over their lifetime. If 30% of customers buy twice, LTV = AOV × 1.3.</span></span></label>
+          <div class="input-wrap has-prefix"><span class="input-prefix">$</span><input type="number" id="ltv" value="500" min="1" oninput="calcCAC()"></div>
+        </div>
+        <div class="field">
+          <label>Target ROAS <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Revenue you want for every $1 spent on ads. 3x ROAS = $3 revenue per $1 ad spend.</span></span></label>
+          <div class="input-wrap has-suffix"><input type="number" id="roas" value="3" min="0.5" step="0.1" oninput="calcCAC()"><span class="input-suffix">x</span></div>
+        </div>
+        <div class="field">
+          <label>Monthly Ad Budget <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Your planned monthly ad spend.</span></span></label>
+          <div class="input-wrap has-prefix"><span class="input-prefix">$</span><input type="number" id="budget" value="1000" min="1" oninput="calcCAC()"></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Your numbers</div>
+      <div class="results-grid" id="cac-results">
+        <div class="result-box highlight">
+          <div class="result-label">Max CAC (LTV basis)</div>
+          <div class="result-value" id="r-max-cac">$—</div>
+          <div class="result-sub">Never exceed this</div>
+        </div>
+        <div class="result-box highlight">
+          <div class="result-label">Max CAC (AOV basis)</div>
+          <div class="result-value" id="r-max-cac-aov">$—</div>
+          <div class="result-sub">Conservative ceiling</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Max CPL</div>
+          <div class="result-value" id="r-max-cpl">$—</div>
+          <div class="result-sub">Cost per lead ceiling</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Break-Even ROAS</div>
+          <div class="result-value" id="r-be-roas">—x</div>
+          <div class="result-sub">Min to not lose money</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Max Customers/Month</div>
+          <div class="result-value" id="r-customers">—</div>
+          <div class="result-sub">At max CAC</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Target Monthly Revenue</div>
+          <div class="result-value" id="r-revenue">$—</div>
+          <div class="result-sub">At target ROAS</div>
+        </div>
+      </div>
+      <div class="insight" id="cac-insight"></div>
+    </div>
+  </div>
+
+  <!-- ══ TAB 2: GROWTH MATH ══ -->
+  <div class="panel" id="panel-1">
+    <div class="card">
+      <div class="card-title">Growth Math Calculator</div>
+      <div class="card-desc">Work backwards from your revenue target to understand exactly how many leads, clicks, and ad impressions you actually need.</div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label>Monthly Revenue Target</label>
+          <div class="input-wrap has-prefix"><span class="input-prefix">$</span><input type="number" id="gm-revenue" value="10000" min="1" oninput="calcGrowth()"></div>
+        </div>
+        <div class="field">
+          <label>Average Order Value</label>
+          <div class="input-wrap has-prefix"><span class="input-prefix">$</span><input type="number" id="gm-aov" value="250" min="1" oninput="calcGrowth()"></div>
+        </div>
+        <div class="field">
+          <label>Lead-to-Customer Rate <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">What % of leads become paying customers. Sales calls: 15–30%. E-commerce checkout: 2–5%.</span></span></label>
+          <div class="input-wrap has-suffix"><input type="number" id="gm-l2c" value="20" min="0.1" max="100" step="0.1" oninput="calcGrowth()"><span class="input-suffix">%</span></div>
+        </div>
+        <div class="field">
+          <label>Click-to-Lead Rate <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">% of ad clicks that become leads (fill a form, call, etc.). Typical: 5–15%.</span></span></label>
+          <div class="input-wrap has-suffix"><input type="number" id="gm-c2l" value="8" min="0.1" max="100" step="0.1" oninput="calcGrowth()"><span class="input-suffix">%</span></div>
+        </div>
+        <div class="field">
+          <label>Average CPC (Cost Per Click)</label>
+          <div class="input-wrap has-prefix"><span class="input-prefix">$</span><input type="number" id="gm-cpc" value="1.50" min="0.01" step="0.01" oninput="calcGrowth()"></div>
+        </div>
+        <div class="field">
+          <label>Current Monthly Ad Budget</label>
+          <div class="input-wrap has-prefix"><span class="input-prefix">$</span><input type="number" id="gm-budget" value="1000" min="1" oninput="calcGrowth()"></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Your funnel, backwards</div>
+      <div class="funnel-viz" id="funnel-viz">
+        <div class="funnel-step" id="fs-1"><span class="funnel-icon">🎯</span><div class="funnel-text">You need <strong id="f-customers">—</strong> new customers</div></div>
+        <div class="funnel-step" id="fs-2"><span class="funnel-icon">📋</span><div class="funnel-text">Which requires <strong id="f-leads">—</strong> qualified leads</div></div>
+        <div class="funnel-step" id="fs-3"><span class="funnel-icon">👆</span><div class="funnel-text">Which requires <strong id="f-clicks">—</strong> ad clicks</div></div>
+        <div class="funnel-step" id="fs-4"><span class="funnel-icon">💰</span><div class="funnel-text">At $<span id="f-cpc-show">—</span>/click, that costs <strong id="f-ad-cost">$—</strong></div></div>
+      </div>
+
+      <div class="insight" id="growth-insight"></div>
+
+      <div class="divider"></div>
+      <div class="results-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="result-box">
+          <div class="result-label">Customers Needed</div>
+          <div class="result-value" id="gm-r-customers">—</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Leads Needed</div>
+          <div class="result-value" id="gm-r-leads">—</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Budget Required</div>
+          <div class="result-value" id="gm-r-budget">$—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB 3: BUDGET ALLOCATOR ══ -->
+  <div class="panel" id="panel-2">
+    <div class="card">
+      <div class="card-title">Monthly Budget Allocator</div>
+      <div class="card-desc">Split your ad budget across testing, scaling, and retargeting — with kill and scale rules built in. No more ad-hoc decisions at 11pm.</div>
+
+      <div class="field-grid" style="grid-template-columns: 1fr 1fr;">
+        <div class="field">
+          <label>Monthly Ad Budget</label>
+          <div class="input-wrap has-prefix"><span class="input-prefix">$</span><input type="number" id="ba-budget" value="2000" min="1" oninput="calcBudget()"></div>
+        </div>
+        <div class="field">
+          <label>Business Stage <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Affects allocation. Testing: you are still finding winners. Scaling: you have proven campaigns.</span></span></label>
+          <select id="ba-stage" onchange="calcBudget()" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:15px;background:var(--warm-white);color:var(--black);font-family:'Inter',sans-serif;outline:none;cursor:pointer;">
+            <option value="testing">Still Testing</option>
+            <option value="scaling" selected>Scaling Winners</option>
+            <option value="optimizing">Optimizing / Mature</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Allocation breakdown</div>
+
+      <div class="budget-bar" id="budget-bar">
+        <div class="budget-seg seg-test" id="seg-test-bar" style="width:30%">30%</div>
+        <div class="budget-seg seg-scale" id="seg-scale-bar" style="width:40%">40%</div>
+        <div class="budget-seg seg-retarget" id="seg-retarget-bar" style="width:20%">20%</div>
+        <div class="budget-seg seg-reserve" id="seg-reserve-bar" style="width:10%">10%</div>
+      </div>
+
+      <div class="budget-legend" id="budget-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#5B4BB5"></div>Testing new creatives<span class="legend-amount" id="ba-test-amt">$—</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Scaling proven campaigns<span class="legend-amount" id="ba-scale-amt">$—</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Retargeting warm audiences<span class="legend-amount" id="ba-retarget-amt">$—</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#888"></div>Reserve (week 4 buffer)<span class="legend-amount" id="ba-reserve-amt">$—</span></div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Decision rules</div>
+      <ul class="checklist" style="gap:6px;" id="budget-rules">
+        <li style="cursor:default;pointer-events:none;background:var(--off-white);">
+          <div class="check-text" id="kill-rule">—</div>
+        </li>
+        <li style="cursor:default;pointer-events:none;background:var(--off-white);">
+          <div class="check-text" id="scale-rule">—</div>
+        </li>
+        <li style="cursor:default;pointer-events:none;background:var(--off-white);">
+          <div class="check-text" id="refresh-rule">—</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══ TAB 4: FAILURE DIAGNOSIS ══ -->
+  <div class="panel" id="panel-3">
+    <div class="card">
+      <div class="card-title">Campaign Failure Diagnosis</div>
+      <div class="card-desc">Answer a few questions. Get the real root cause — and the exact fix. Stop guessing what went wrong.</div>
+
+      <div id="diag-breadcrumb" class="diag-breadcrumb" style="display:none;"></div>
+      <div id="diag-content"></div>
+      <div class="diag-result" id="diag-result">
+        <div class="diag-result-title" id="diag-r-title"></div>
+        <div class="diag-result-fix" id="diag-r-fix"></div>
+        <button class="diag-reset" onclick="resetDiag()">← Start over</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB 5: PRE-LAUNCH AUDIT ══ -->
+  <div class="panel" id="panel-4">
+    <div class="card">
+      <div class="card-title">Pre-Launch Campaign Audit</div>
+      <div class="card-desc">Tick every box before your campaign goes live. This checklist catches the problems that cost agencies $2,500 before anyone noticed.</div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="audit-progress" style="width:0%"></div>
+      </div>
+      <div class="progress-label"><strong id="audit-count">0</strong> of <strong id="audit-total">0</strong> checks complete</div>
+
+      <div id="audit-list"></div>
+      <div class="insight" id="audit-insight"></div>
+    </div>
+  </div>
+
+  <!-- UPGRADE BANNER -->
+  <div class="upgrade-banner">
+    <h3>These are the foundation tools.<br>The full system goes deeper.</h3>
+    <p>The Acquisition Engine includes 9 working tools — CAC, LTV, budget allocation, creative testing rules, client expectation scripts, and a full diagnosis tree. Everything that runs a profitable campaign from first spend to scale.</p>
+    <div class="upgrade-features">
+      <span class="upgrade-feat">Conversion lag estimator</span>
+      <span class="upgrade-feat">Creative testing (555 rule)</span>
+      <span class="upgrade-feat">Client discovery scripts</span>
+      <span class="upgrade-feat">Full diagnosis tree (18 nodes)</span>
+      <span class="upgrade-feat">Pricing & offer design</span>
+      <span class="upgrade-feat">GTM workflow builder</span>
+    </div>
+    <a href="https://rizwankgrowth.gumroad.com" target="_blank" class="upgrade-btn">Get The Acquisition Engine — $47</a>
+    <div class="upgrade-price">One-time. Instant download. 7-day refund, no questions.</div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  Profit Math is a free tool by <a href="https://rizwankgrowth.gumroad.com" target="_blank">Rizwan Digital</a>. 
+  Built from research into 100+ small business ad campaign failures. 
+  No email required. No data collected.
+</div>
+
+<script>
+// TAB SWITCHING
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+}
+
+// HELPERS
+const fmt = (n, d=0) => isFinite(n) && n !== null ? n.toFixed(d) : '—';
+const fmtMoney = n => isFinite(n) && n !== null ? '$' + (n >= 1000 ? (n/1000).toFixed(1) + 'k' : n.toFixed(0)) : '$—';
+const fmtNum = n => isFinite(n) && n !== null ? Math.ceil(n).toLocaleString() : '—';
+const val = id => parseFloat(document.getElementById(id).value) || 0;
+const set = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+
+// CAC CALCULATOR
+function calcCAC() {
+  const aov = val('aov'), margin = val('margin')/100, cvr = val('cvr')/100;
+  const ltv = val('ltv'), roas = val('roas'), budget = val('budget');
+
+  const maxCACltv = ltv * margin * 0.5;
+  const maxCACaov = aov * margin * 0.4;
+  const maxCPL = maxCACaov * cvr;
+  const beROAS = 1 / margin;
+  const maxCustomers = budget / maxCACaov;
+  const targetRevenue = budget * roas;
+
+  set('r-max-cac', fmtMoney(maxCACltv));
+  set('r-max-cac-aov', fmtMoney(maxCACaov));
+  set('r-max-cpl', fmtMoney(maxCPL));
+  set('r-be-roas', fmt(beROAS,1) + 'x');
+  set('r-customers', fmtNum(maxCustomers));
+  set('r-revenue', fmtMoney(targetRevenue));
+
+  const ins = document.getElementById('cac-insight');
+  ins.className = 'insight show';
+  if (roas > beROAS * 1.5) {
+    ins.className = 'insight show good';
+    ins.innerHTML = `<strong>Looking profitable.</strong> Your target ROAS of ${roas}x is well above your break-even of ${fmt(beROAS,1)}x. At $${budget.toFixed(0)}/month you need ${fmtNum(maxCustomers)} customers — each paying at most ${fmtMoney(maxCACaov)}. The math works if your campaigns hit target CVR.`;
+  } else if (roas > beROAS) {
+    ins.className = 'insight show caution';
+    ins.innerHTML = `<strong>Thin margin.</strong> Your target ROAS of ${roas}x is only slightly above your break-even of ${fmt(beROAS,1)}x. Small drops in conversion rate will flip this unprofitable. Consider tightening your target CVR assumption or raising prices.`;
+  } else {
+    ins.className = 'insight show bad';
+    ins.innerHTML = `<strong>Unprofitable at these numbers.</strong> Your target ROAS of ${roas}x is below your break-even of ${fmt(beROAS,1)}x. You will lose money at this margin. Either increase prices, reduce ad costs, or improve conversion rate before spending.`;
+  }
+}
+calcCAC();
+
+// GROWTH MATH
+function calcGrowth() {
+  const revenue = val('gm-revenue'), aov = val('gm-aov');
+  const l2c = val('gm-l2c')/100, c2l = val('gm-c2l')/100;
+  const cpc = val('gm-cpc'), budget = val('gm-budget');
+
+  const customersNeeded = revenue / aov;
+  const leadsNeeded = customersNeeded / l2c;
+  const clicksNeeded = leadsNeeded / c2l;
+  const budgetNeeded = clicksNeeded * cpc;
+  const budgetGap = budgetNeeded - budget;
+
+  set('gm-r-customers', fmtNum(customersNeeded));
+  set('gm-r-leads', fmtNum(leadsNeeded));
+  set('gm-r-budget', fmtMoney(budgetNeeded));
+
+  set('f-customers', fmtNum(customersNeeded) + ' customers');
+  set('f-leads', fmtNum(leadsNeeded) + ' leads');
+  set('f-clicks', fmtNum(clicksNeeded) + ' clicks');
+  set('f-cpc-show', cpc.toFixed(2));
+  set('f-ad-cost', fmtMoney(budgetNeeded));
+
+  ['fs-1','fs-2','fs-3','fs-4'].forEach((id,i) => {
+    setTimeout(() => document.getElementById(id)?.classList.add('show'), i * 80);
+  });
+
+  const ins = document.getElementById('growth-insight');
+  ins.className = 'insight show';
+  if (budgetGap <= 0) {
+    ins.className = 'insight show good';
+    ins.innerHTML = `<strong>Budget is sufficient.</strong> Your $${budget.toFixed(0)}/month budget can achieve your ${fmtMoney(revenue)} revenue target at these conversion rates. You have $${Math.abs(budgetGap).toFixed(0)} of headroom.`;
+  } else {
+    ins.className = 'insight show bad';
+    ins.innerHTML = `<strong>Budget gap: ${fmtMoney(budgetGap)} short.</strong> To hit $${revenue.toLocaleString()}/month in revenue at these rates, you need ${fmtMoney(budgetNeeded)} in ad spend — but your budget is $${budget.toFixed(0)}. Either increase budget, improve conversion rates, or lower the revenue target.`;
+  }
+}
+calcGrowth();
+
+// BUDGET ALLOCATOR
+function calcBudget() {
+  const budget = val('ba-budget');
+  const stage = document.getElementById('ba-stage').value;
+
+  const allocs = {
+    testing:    { test: 0.45, scale: 0.25, retarget: 0.20, reserve: 0.10 },
+    scaling:    { test: 0.30, scale: 0.40, retarget: 0.20, reserve: 0.10 },
+    optimizing: { test: 0.15, scale: 0.55, retarget: 0.25, reserve: 0.05 },
+  };
+  const rules = {
+    testing:    ['🛑 Kill rule: Pause any ad set spending more than 3× your target CAC with no conversion after 4 days.', '📈 Scale rule: If an ad set hits your target CPA for 5 consecutive days, increase budget by 25%.', '🔄 Refresh rule: Replace creative every 2 weeks minimum — testing phase creative fatigues fast.'],
+    scaling:    ['🛑 Kill rule: Pause campaigns spending more than 2× their daily average with no sales in 72 hours.', '📈 Scale rule: Increase winning ad set budgets by 20–30% every 3 days. Never double overnight.', '🔄 Refresh rule: Introduce 2 new creative variants every 10 days to offset fatigue on scaling campaigns.'],
+    optimizing: ['🛑 Kill rule: Any ad set with CPA more than 15% above target for a 14-day rolling window gets paused.', '📈 Scale rule: Proven campaigns can absorb 30–40% budget increases — but only after 7-day CPA stability.', '🔄 Refresh rule: Creative refresh monthly. Retargeting audience exclusions refresh every 30 days.'],
+  };
+
+  const a = allocs[stage];
+  const pct = v => Math.round(v*100) + '%';
+
+  set('ba-test-amt', '$' + (budget * a.test).toFixed(0));
+  set('ba-scale-amt', '$' + (budget * a.scale).toFixed(0));
+  set('ba-retarget-amt', '$' + (budget * a.retarget).toFixed(0));
+  set('ba-reserve-amt', '$' + (budget * a.reserve).toFixed(0));
+
+  document.getElementById('seg-test-bar').style.width = pct(a.test);
+  document.getElementById('seg-test-bar').textContent = pct(a.test);
+  document.getElementById('seg-scale-bar').style.width = pct(a.scale);
+  document.getElementById('seg-scale-bar').textContent = pct(a.scale);
+  document.getElementById('seg-retarget-bar').style.width = pct(a.retarget);
+  document.getElementById('seg-retarget-bar').textContent = pct(a.retarget);
+  document.getElementById('seg-reserve-bar').style.width = pct(a.reserve);
+  document.getElementById('seg-reserve-bar').textContent = pct(a.reserve);
+
+  const r = rules[stage];
+  set('kill-rule', r[0]);
+  set('scale-rule', r[1]);
+  set('refresh-rule', r[2]);
+}
+calcBudget();
+
+// FAILURE DIAGNOSIS TREE
+const DIAG_TREE = {
+  start: {
+    q: "What is the primary symptom you're seeing?",
+    opts: [
+      { label: "Clicks but no conversions", next: 'clicks_no_conv' },
+      { label: "Impressions but no clicks", next: 'imp_no_clicks' },
+      { label: "Conversions but unprofitable", next: 'conv_unprofitable' },
+      { label: "Results stopped after initial success", next: 'results_stopped' },
+    ]
+  },
+  clicks_no_conv: {
+    q: "You're getting clicks but no purchases or leads. What do you see after clicking the ad?",
+    opts: [
+      { label: "Landing page loads fine", next: 'lp_fine' },
+      { label: "Slow load / errors", next: 'lp_broken' },
+      { label: "Landing page looks different from the ad", next: 'lp_mismatch' },
+      { label: "No landing page — straight to checkout", next: 'no_lp' },
+    ]
+  },
+  lp_fine: {
+    q: "The page loads fine. How does your conversion rate compare to your target?",
+    opts: [
+      { label: "CVR is less than half my target", next: 'low_cvr' },
+      { label: "CVR is okay but CPA is too high", next: 'cpa_high' },
+      { label: "I haven't tracked CVR specifically", next: 'no_cvr_tracking' },
+    ]
+  },
+  low_cvr: {
+    result: {
+      title: "Root cause: Weak offer or trust gap on the landing page",
+      fix: "Your traffic is interested enough to click (good), but something on the landing page kills intent. The most common culprits: (1) The headline doesn't match the ad promise — people feel deceived. (2) No social proof visible above the fold — testimonials, numbers, logos. (3) The offer is unclear — what exactly am I getting, for how much, and why now? (4) The CTA is buried or weak. Fix: Run a 5-second test — show the page to someone unfamiliar for 5 seconds, then ask what they think you're selling. If they can't answer, fix the clarity first."
+    }
+  },
+  cpa_high: {
+    result: {
+      title: "Root cause: Your target CAC was never set correctly",
+      fix: "Your campaigns are converting — but at a cost that doesn't make business sense. This usually means your max CAC was never calculated before spending. Go to the CAC Calculator tab, enter your real numbers, and find your actual ceiling. Then set a CPA target in your ad platform that matches it. If your current CPA is above that ceiling, the campaign is unprofitable regardless of ROAS."
+    }
+  },
+  no_cvr_tracking: {
+    result: {
+      title: "Root cause: Broken or missing conversion tracking",
+      fix: "You cannot optimise what you cannot measure. The ad platform is likely optimising for clicks or reach — not actual sales or leads — because it has no conversion data. Fix immediately: (1) Verify your pixel is firing on the thank-you / confirmation page, not just the product page. (2) Create a custom conversion event for the specific action you want (purchase, form submit, call click). (3) Use the ad platform's Event Manager to confirm the event fires when you test it manually. This is the single most common technical failure across small business ad accounts."
+    }
+  },
+  lp_broken: {
+    result: {
+      title: "Root cause: Technical failure on the landing page",
+      fix: "You are paying for clicks that hit a dead end. Every broken landing page is wasted spend. Fix before relaunching: (1) Test the page on mobile — most ad traffic is mobile. (2) Check page load speed (Google PageSpeed Insights — aim for under 3 seconds). (3) Check for redirect loops or SSL errors. (4) Verify the page works in the same browser/device your audience uses. This is the most avoidable failure and the most common one that agencies miss."
+    }
+  },
+  lp_mismatch: {
+    result: {
+      title: "Root cause: Ad-to-page message mismatch",
+      fix: "Message match is the #1 conversion killer that nobody talks about. When the ad says 'Free 7-day trial' and the landing page leads with the monthly price, conversion rate drops 40–60%. Fix: The headline of your landing page must mirror the language of your ad — not just the offer, but the emotional tone. If the ad is urgent, the page must be urgent. If the ad is benefit-led, the page must lead with the same benefit. Run a quick audit: read your ad headline, then immediately read your landing page headline. If they feel like two different products, they are."
+    }
+  },
+  no_lp: {
+    result: {
+      title: "Root cause: No landing page — sending cold traffic direct to checkout",
+      fix: "Cold traffic needs a middle step before they are ready to buy. Sending ad clicks straight to a checkout page works for retargeting (warm audiences who already know you). For cold traffic, you need a page that: (1) States the problem clearly, (2) Presents your solution, (3) Builds trust (testimonials, social proof), (4) Then asks for the sale. Even a simple one-page Carrd or Unbounce landing page will outperform a direct-to-checkout URL for cold audiences."
+    }
+  },
+  imp_no_clicks: {
+    q: "Impressions are running but nobody's clicking. What does your CTR look like?",
+    opts: [
+      { label: "CTR under 0.5%", next: 'low_ctr' },
+      { label: "CTR looks okay but no reach", next: 'audience_issue' },
+    ]
+  },
+  low_ctr: {
+    result: {
+      title: "Root cause: Creative or audience mismatch — your ad doesn't stop the scroll",
+      fix: "A CTR under 0.5% means your ad is being shown but ignored. The scroll-stop problem. Two causes: (1) Creative problem: The visual or opening line doesn't create pattern interrupt in the feed. Try video over static, faces over objects, text overlays that state a pain point directly. (2) Audience problem: You're reaching the right volume of people but the wrong ones. Review your audience age, location, and interest fit. Try a narrow interest stack (3–5 layered interests) rather than a broad single interest."
+    }
+  },
+  audience_issue: {
+    result: {
+      title: "Root cause: Audience too narrow or budget too low for delivery",
+      fix: "If your CTR is decent but reach is very low, the audience is either too narrow for the budget or in a high-competition auction. Fix: (1) Audience size: aim for 500k–2M for cold traffic on Facebook/Instagram. Smaller audiences exhaust quickly at any real budget. (2) Bid competition: check the 'Auction Overlap' diagnostic in Facebook Ads Manager — if your ad sets are competing against each other, consolidate. (3) Budget relative to audience: a $10/day budget reaching a 5M audience will barely show. Increase budget or narrow the audience."
+    }
+  },
+  conv_unprofitable: {
+    q: "You're getting sales but not making money. Do you know your actual margin per sale?",
+    opts: [
+      { label: "Yes — and it's below my ad cost", next: 'margins_low' },
+      { label: "My ROAS looks good but profit is low", next: 'roas_misleading' },
+      { label: "I haven't calculated margin per sale", next: 'no_margin_calc' },
+    ]
+  },
+  margins_low: {
+    result: {
+      title: "Root cause: Business model margin issue — advertising is not the fix",
+      fix: "No amount of campaign optimisation fixes a margin problem. If your product costs too much to deliver relative to what you charge, ads will always be unprofitable. Your options: (1) Raise prices — test a 15–30% price increase. You will lose some volume but gain margin. (2) Bundle products — increase average order value so the same CAC produces more gross profit. (3) Create a backend offer — the front-end product breaks even, the upsell is the profit. (4) Reduce COGS — renegotiate supplier terms or streamline delivery. Fix margins first, then advertise."
+    }
+  },
+  roas_misleading: {
+    result: {
+      title: "Root cause: Measuring ROAS without accounting for true margins",
+      fix: "A 3x ROAS sounds healthy until you realise your gross margin is 25% — at which point you need a 4x ROAS just to break even. The fix: calculate your break-even ROAS first (1 ÷ gross margin = break-even ROAS). A 30% margin business needs 3.3x ROAS to break even. A 40% margin business needs 2.5x. Any ROAS target below your break-even is unprofitable. Use the CAC Calculator tab to find your real numbers, then update your platform's ROAS target accordingly."
+    }
+  },
+  no_margin_calc: {
+    result: {
+      title: "Root cause: Running paid advertising without knowing unit economics",
+      fix: "You cannot know if ads are working without knowing your margin. Calculate it now: (Revenue per sale) minus (product cost + delivery cost + payment processing + any per-order overhead) = gross profit per sale. Gross profit ÷ revenue = gross margin %. Then go to the CAC Calculator tab and enter this margin. Your break-even ROAS and max CAC will tell you immediately whether your current campaigns are profitable or not. This should be the first calculation you do before any future spend."
+    }
+  },
+  results_stopped: {
+    q: "Results stopped after an initial good period. When did it stop?",
+    opts: [
+      { label: "After I increased the budget", next: 'budget_shock' },
+      { label: "After 3–4 weeks without changes", next: 'creative_fatigue' },
+      { label: "After the platform made automatic changes", next: 'platform_changes' },
+    ]
+  },
+  budget_shock: {
+    result: {
+      title: "Root cause: Budget shock — you scaled too fast and broke the algorithm",
+      fix: "Doubling or tripling a campaign budget resets the learning phase. The platform's algorithm loses its calibration and starts optimising from scratch in a larger, less targeted auction. Fix: (1) Never increase budget by more than 20–30% in a single change. (2) Wait at least 3–5 days between increases. (3) If you already broke it: pause the ad set, duplicate it with the higher budget, and relaunch the duplicate. The duplicate starts fresh but inherits the creative performance history. (4) Alternative: use 'Campaign Budget Optimisation' (CBO) at the campaign level — it scales more gracefully than ad-set-level budgets."
+    }
+  },
+  creative_fatigue: {
+    result: {
+      title: "Root cause: Creative fatigue — your audience has seen this ad too many times",
+      fix: "Creative fatigue is the most common reason consistent campaigns suddenly stop working. Signs: frequency above 3.0, CTR dropping week-over-week, CPM rising. Fix: (1) Introduce 2 fresh creative variants immediately. Keep the same offer and audience — just change the visual and hook. (2) Set a creative refresh schedule: new variants every 10–14 days on scaling campaigns, every 20–30 days on retargeting. (3) Expand your audience slightly to introduce new people who haven't seen the creative yet."
+    }
+  },
+  platform_changes: {
+    result: {
+      title: "Root cause: Platform-initiated changes disrupted your delivery",
+      fix: "Ad platforms frequently make automatic changes: iOS updates affecting attribution, algorithm updates shifting auction dynamics, automatic audience expansion toggled on, creative optimisation that swapped your winning variant for a losing one. Fix: (1) Review your ad account change history — there is a log in all major platforms. (2) Check if 'Advantage+ Audience' or 'Advantage+ Creative' was automatically enabled. (3) Check attribution window — if it changed from 7-day click to 1-day click, your reported conversions look worse even if actual sales are the same. (4) Review your pixel events — iOS 17+ and browser privacy changes may have reduced your trackable conversions."
+    }
+  },
+};
+
+let diagPath = ['start'];
+let diagBreadcrumb = [];
+
+function renderDiag() {
+  const nodeId = diagPath[diagPath.length - 1];
+  const node = DIAG_TREE[nodeId];
+  const content = document.getElementById('diag-content');
+  const resultEl = document.getElementById('diag-result');
+  const breadcrumbEl = document.getElementById('diag-breadcrumb');
+
+  resultEl.classList.remove('show');
+  content.style.display = 'block';
+
+  if (diagBreadcrumb.length > 0) {
+    breadcrumbEl.style.display = 'block';
+    breadcrumbEl.innerHTML = 'Path: ' + diagBreadcrumb.map((b,i) => `<span>${b}</span>`).join(' → ');
+  } else {
+    breadcrumbEl.style.display = 'none';
+  }
+
+  if (node.result) {
+    content.style.display = 'none';
+    resultEl.classList.add('show');
+    document.getElementById('diag-r-title').textContent = node.result.title;
+    document.getElementById('diag-r-fix').textContent = node.result.fix;
+    return;
+  }
+
+  let html = `<div class="diagnosis-question">${node.q}</div><div class="diag-options">`;
+  node.opts.forEach((opt, i) => {
+    html += `<button class="diag-option" onclick="diagChoose('${opt.next}','${opt.label.replace(/'/g,"\\'")}',${i})">${opt.label}</button>`;
+  });
+  html += '</div>';
+  content.innerHTML = html;
+}
+
+function diagChoose(next, label, idx) {
+  diagPath.push(next);
+  diagBreadcrumb.push(label);
+  renderDiag();
+}
+
+function resetDiag() {
+  diagPath = ['start'];
+  diagBreadcrumb = [];
+  document.getElementById('diag-result').classList.remove('show');
+  document.getElementById('diag-content').style.display = 'block';
+  renderDiag();
+}
+
+renderDiag();
+
+// PRE-LAUNCH AUDIT
+const AUDIT_ITEMS = [
+  { cat: 'Tracking & Pixel', text: 'Pixel / tracking tag is installed on the correct domain and firing on page load', id: 'a1' },
+  { cat: 'Tracking & Pixel', text: 'Conversion event is set up and fires correctly on the thank-you / confirmation page (not just the product page)', id: 'a2' },
+  { cat: 'Tracking & Pixel', text: 'You have tested the conversion event manually and confirmed it registers in Events Manager', id: 'a3' },
+  { cat: 'Tracking & Pixel', text: 'Attribution window is set appropriately (7-day click recommended for most businesses)', id: 'a4' },
+  { cat: 'Ad Account', text: 'You have admin access to the ad account (not just standard access)', id: 'a5' },
+  { cat: 'Ad Account', text: 'Payment method is verified and has sufficient funds / credit limit for the planned budget', id: 'a6' },
+  { cat: 'Ad Account', text: 'Ad account has no active policy violations or restricted categories that affect your industry', id: 'a7' },
+  { cat: 'Landing Page', text: 'Landing page loads in under 3 seconds on mobile (test with Google PageSpeed Insights)', id: 'a8' },
+  { cat: 'Landing Page', text: 'Landing page headline matches the primary message in your ad creative', id: 'a9' },
+  { cat: 'Landing Page', text: 'CTA is visible above the fold without scrolling on mobile', id: 'a10' },
+  { cat: 'Landing Page', text: 'Landing page has at least one social proof element (testimonial, review count, client logo)', id: 'a11' },
+  { cat: 'Landing Page', text: 'Form or checkout flow works end-to-end — you have tested a complete conversion yourself', id: 'a12' },
+  { cat: 'Creative', text: 'Primary text addresses a pain point in the first line (before "see more" truncation)', id: 'a13' },
+  { cat: 'Creative', text: 'Creative has been tested on mobile feed format — looks correct and is legible', id: 'a14' },
+  { cat: 'Creative', text: 'You have at least 2 creative variants to test (prevents single-creative blind spots)', id: 'a15' },
+  { cat: 'Numbers', text: 'Maximum CAC has been calculated before launching (see CAC Calculator tab)', id: 'a16' },
+  { cat: 'Numbers', text: 'Daily budget is set to allow at least 5–10 conversions before the first optimization review', id: 'a17' },
+  { cat: 'Numbers', text: 'Break-even ROAS has been calculated and entered as a target in the ad platform', id: 'a18' },
+];
+
+function buildAudit() {
+  const list = document.getElementById('audit-list');
+  let currentCat = '';
+  let html = '';
+  AUDIT_ITEMS.forEach(item => {
+    if (item.cat !== currentCat) {
+      html += `<div class="check-category">${item.cat}</div>`;
+      currentCat = item.cat;
+    }
+    html += `<ul class="checklist"><li id="li-${item.id}" onclick="toggleAudit('${item.id}')"><div class="check-box" id="cb-${item.id}"></div><div class="check-text">${item.text}</div></li></ul>`;
+  });
+  list.innerHTML = html;
+  document.getElementById('audit-total').textContent = AUDIT_ITEMS.length;
+  updateAuditProgress();
+}
+
+function toggleAudit(id) {
+  const li = document.getElementById('li-' + id);
+  const cb = document.getElementById('cb-' + id);
+  const checked = li.classList.toggle('checked');
+  cb.textContent = checked ? '✓' : '';
+  updateAuditProgress();
+}
+
+function updateAuditProgress() {
+  const checked = document.querySelectorAll('.checklist li.checked').length;
+  const total = AUDIT_ITEMS.length;
+  const pct = Math.round((checked / total) * 100);
+  document.getElementById('audit-progress').style.width = pct + '%';
+  document.getElementById('audit-count').textContent = checked;
+
+  const ins = document.getElementById('audit-insight');
+  ins.className = 'insight show';
+  if (checked === total) {
+    ins.className = 'insight show good';
+    ins.innerHTML = '<strong>All checks complete.</strong> Your campaign is ready to launch. These 18 checks eliminate the most common pre-launch failures. Launch with confidence — and monitor for the first 72 hours.';
+  } else if (checked >= total * 0.75) {
+    ins.className = 'insight show caution';
+    ins.innerHTML = `<strong>${total - checked} item${total-checked!==1?'s':''} remaining.</strong> Almost ready. The unchecked items — especially anything in Tracking & Numbers — are the highest-risk gaps. Complete these before spending.`;
+  } else {
+    ins.className = 'insight show bad';
+    ins.innerHTML = `<strong>${checked} of ${total} complete.</strong> Do not launch until the tracking and landing page sections are fully checked. Those failures are invisible at launch and expensive to diagnose after spending has started.`;
+  }
+}
+
+buildAudit();
+</script>
+</body>
+</html>
